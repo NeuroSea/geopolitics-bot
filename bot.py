@@ -18,6 +18,12 @@ CHECK_INTERVAL_HOURS = int(os.getenv("CHECK_INTERVAL_HOURS", "6"))
 
 analyzer = GeopoliticsAnalyzer()
 
+async def post_init(application):
+    await application.bot.send_message(
+        chat_id=CHAT_ID,
+        text=f"M-ai pornit ba! 🟢\nMonitorizez situatia globala la fiecare {CHECK_INTERVAL_HOURS} ore."
+    )
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🌍 Bot Geopolitic Activ!\n\n"
@@ -47,7 +53,7 @@ async def scheduled_check(context: ContextTypes.DEFAULT_TYPE):
         logger.error(f"Eroare scheduled check: {e}")
 
 def main():
-    app = Application.builder().token(TELEGRAM_TOKEN).build()
+    app = Application.builder().token(TELEGRAM_TOKEN).post_init(post_init).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("check", check_now))
